@@ -6,9 +6,9 @@ public class HashTable {
         int opcion;
         do {
             System.out.println("Menú de Opciones:");
-            System.out.println("1. Ingresar clave y valor");
-            System.out.println("2. Eliminar clave");
-            System.out.println("3. Buscar clave");
+            System.out.println("1. Ingresar");
+            System.out.println("2. Eliminar");
+            System.out.println("3. Buscar");
             System.out.println("4. Cargar desde archivo");
             System.out.println("5. Reporte de la tabla");
             System.out.println("6. Salir");
