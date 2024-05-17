@@ -18,6 +18,7 @@ class HashTable {
     private int size;
     private LinkedList<Entry>[] table;
 
+    @SuppressWarnings("unchecked")
     public HashTable(int size) {
         this.size = size;
         table = new LinkedList[size];
@@ -65,7 +66,18 @@ class HashTable {
         System.out.println("La clave " + key + " no ha sido encontrada. Intente nuevamente.");
     }
 
-    public void buscar(int key) {}
+    public Integer buscar(int key) {
+        int index = hashFunction(key);
+        LinkedList<Entry> list = table[index];
+
+        for (Entry entry : list) {
+            if (entry.key == key) {
+                return entry.value;
+            }
+        }
+        return null; // Si no se encuentra la clave
+
+    }
 
     public void cargarDesdeArchivo(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -130,9 +142,16 @@ class HashTable {
                     hashTable.eliminar(claveEliminar);
                     break;
                 case 3:
-                    System.out.println("Opción 3");
+                System.out.print("Ingresa la clave que desea buscar (entero): ");
+                int claveBuscar = scanner.nextInt();
+                Integer resultado = hashTable.buscar(claveBuscar);
+                if (resultado != null) {
+                    System.out.println("Valor encontrado: " + resultado);
+                } else {
+                    System.out.println("Clave no encontrada.");
+                }
+                break;
                     
-                    break;
                 case 4:
                     System.out.print("Ingresa el nombre del archivo: ");
                     String filename = scanner.next();
