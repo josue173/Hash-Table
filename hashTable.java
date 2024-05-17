@@ -47,7 +47,22 @@ class HashTable {
     list.add(new Entry(key, value));
 }
 
+
     public void eliminar(int key) {
+        int index = hashFunction(key);
+        LinkedList<Entry> list = table[index];
+
+        for (Entry entry : list){
+        // Si la clave esta en la lista, esta se elimina.
+            if (entry.key == key){
+                list.remove(entry);
+        // Mensaje que indica que la clave ha sido eliminada.
+                System.out.println("La clave "+ key +" ha sido eliminada.");
+                return;
+            }
+        }
+        // Si no se encuentra la clave ingresada, marcara error.
+        System.out.println("La clave " + key + " no ha sido encontrada. Intente nuevamente.");
     }
 
     public void buscar(int key) {}
@@ -110,8 +125,9 @@ class HashTable {
                     System.out.println("Clave-valor insertada correctamente.");
                     break;
                 case 2:
-                    System.out.println("Opción 2");
-                    
+                    System.out.print("Ingresa la clave que desea eliminar (entero): ");
+                    int claveEliminar = scanner.nextInt();
+                    hashTable.eliminar(claveEliminar);
                     break;
                 case 3:
                     System.out.println("Opción 3");
