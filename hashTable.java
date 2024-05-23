@@ -1,92 +1,98 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Scanner;
 
-class Entry { // Declarando nodo
-    int key; // Identificador
-    int value; // Valor a almacenar
+public class hashTable {
+    private static ArrayList<Integer>[] Tabla = new ArrayList[10];
+    private static Scanner objeto = new Scanner(System.in);
 
-    Entry(int key, int value) {
-        this.key = key;
-        this.value = value;
-    }
-}
-
-class HashTable {
-    private int size;
-    private LinkedList<Entry>[] table;
-
-    public HashTable(int size) {
-        this.size = size;
-        table = new LinkedList[size];
-        for (int i = 0; i < size; i++) {
-            table[i] = new LinkedList<>();
-        }
-    }
-
-    private int hashFunction(int key) {
-        return Math.abs(key) % size;
-    }
-
-    public void insertar(int key, int value) {
-    int index = hashFunction(key);
-    LinkedList<Entry> list = table[index];
-    
-    // Verificar si la clave ya existe en la lista
-    for (Entry entry : list) {
-        if (entry.key == key) {
-            // Si la clave ya existe, actualizar su valor3
-            entry.value = value;
-            return;
-        }
-    }
-    
-    // Si la clave no existe, agregar un nuevo nodo a la lista
-    list.add(new Entry(key, value));
-}
-
-
-    public void eliminar(int key) {
-        int index = hashFunction(key);
-        LinkedList<Entry> list = table[index];
-
-        for (Entry entry : list){
-        // Si la clave esta en la lista, esta se elimina.
-            if (entry.key == key){
-                list.remove(entry);
-        // Mensaje que indica que la clave ha sido eliminada.
-                System.out.println("La clave "+ key +" ha sido eliminada.");
-                return;
+    public static void main(String[] args) {
+        int opcion;
+        while (true) {
+            mostrarMenu();
+            opcion = objeto.nextInt();
+            
+            switch(opcion) {
+                case 1:
+                    agregarValor();
+                    break;
+                case 2:
+                    eliminarValor();
+                    break;
+                case 3:
+                    cargarDesdeArchivo();
+                    break;
+                case 4:
+                    buscarValor();
+                    break;
+                case 5:
+                    reporteDeDatos();
+                    break;
+                case 6:
+                    System.out.println("Saliendo...");
+                    objeto.close();
+                    return;
+                default:
+                    System.out.println("Opción no válida.");
             }
         }
-        // Si no se encuentra la clave ingresada, marcara error.
-        System.out.println("La clave " + key + " no ha sido encontrada. Intente nuevamente.");
     }
 
-    public Integer buscar(int key) {
-        int index = hashFunction(key);
-        LinkedList<Entry> list = table[index];
+    private static void mostrarMenu() {
+        System.out.println("Opciones:");
+        System.out.println("1. Agregar valor");
+        System.out.println("2. Eliminar valor");
+        System.out.println("3. Cargar desde archivo");
+        System.out.println("4. Buscar valor");
+        System.out.println("5. Reporte de datos");
+        System.out.println("6. Salir");
+        System.out.print("Seleccione una opción: ");
+    }
 
-        for (Entry entry : list) {
-            if (entry.key == key) {
-                return entry.value;
-            }
+    private static void agregarValor() {
+        System.out.print("Ingrese valor para almacenar en la tabla: ");
+        int valor = objeto.nextInt();
+        agregarValor(valor);
+    }
+
+    private static void agregarValor(int valor) {
+        int clave = hashFunction(valor);
+        if (Tabla[clave] == null) {
+            Tabla[clave] = new ArrayList<>();
         }
-        return null; // Si no se encuentra la clave
-
+        Tabla[clave].add(valor);
+        // System.out.println("Valor almacenado en la posición " + clave);
     }
 
-    public void cargarDesdeArchivo(String filename) {
+    private static void eliminarValor() {
+        System.out.print("Ingrese el valor a eliminar: ");
+        int valor = objeto.nextInt();
+        int clave = hashFunction(valor);
+        if (Tabla[clave] != null) {
+            if (Tabla[clave].remove((Integer) valor)) {
+                System.out.println("Valor eliminado de la posición " + clave);
+            } else {
+                System.out.println("Valor no encontrado en la tabla.");
+            }
+        } else {
+            System.out.println("Valor no encontrado en la tabla.");
+        }
+    }
+
+    private static void cargarDesdeArchivo() {
+        System.out.print("Ingrese el nombre del archivo: ");
+        String filename = objeto.next();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 2) {
-                    int key = Integer.parseInt(parts[0]);
-                    int value = Integer.parseInt(parts[1]);
-                    insertar(key, value);
+                for (String part : parts) {
+                    int valor = Integer.parseInt(part.trim());
+                    agregarValor(valor);
                 }
             }
             System.out.println("Datos cargados desde el archivo correctamente.");
@@ -95,79 +101,32 @@ class HashTable {
         }
     }
 
-    public void reporte() {
+    private static void buscarValor() {
+        System.out.print("Ingrese el valor a buscar: ");
+        int valor = objeto.nextInt();
+        int clave = hashFunction(valor);
+        if (Tabla[clave] != null && Tabla[clave].contains(valor)) {
+            System.out.println("Valor encontrado en la posición " + clave);
+        } else {
+            System.out.println("Valor no encontrado en la tabla.");
+        }
+    }
+
+    private static void reporteDeDatos() {
         System.out.println("Reporte detallado de la tabla:");
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < Tabla.length; i++) {
             System.out.println("Index " + i + ":");
-            if (table[i].isEmpty()) {
+            if (Tabla[i] == null || Tabla[i].isEmpty()) {
                 System.out.println("   Vacío");
             } else {
-                for (Entry entry : table[i]) {
-                    System.out.println("   Clave: " + entry.key + ", Valor: " + entry.value);
+                for (Integer valor : Tabla[i]) {
+                    System.out.println("   Valor: " + valor);
                 }
             }
         }
     }
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        HashTable hashTable = new HashTable(10); // Tamaño de la tabla
-        int opcion;
-
-        do {
-            System.out.println("Menú de Opciones:");
-            System.out.println("1. Ingresar");
-            System.out.println("2. Eliminar");
-            System.out.println("3. Buscar");
-            System.out.println("4. Cargar desde archivo");
-            System.out.println("5. Reporte de la tabla");
-            System.out.println("6. Salir");
-            System.out.print("Elija una opción: ");
-            opcion = scanner.nextInt();
-            scanner.nextLine(); // Consumir la nueva línea
-
-            switch (opcion) {
-                case 1:
-                    System.out.print("Ingresa la clave (entero): ");
-                    int clave = scanner.nextInt();
-                    System.out.print("Ingresa el valor (entero): ");
-                    int valor = scanner.nextInt();
-                    hashTable.insertar(clave, valor);
-                    System.out.println("Clave-valor insertada correctamente.");
-                    break;
-                case 2:
-                    System.out.print("Ingresa la clave que desea eliminar (entero): ");
-                    int claveEliminar = scanner.nextInt();
-                    hashTable.eliminar(claveEliminar);
-                    break;
-                case 3:
-                System.out.print("Ingresa la clave que desea buscar (entero): ");
-                int claveBuscar = scanner.nextInt();
-                Integer resultado = hashTable.buscar(claveBuscar);
-                if (resultado != null) {
-                    System.out.println("Valor encontrado: " + resultado);
-                } else {
-                    System.out.println("Clave no encontrada.");
-                }
-                break;
-                    
-                case 4:
-                    System.out.print("Ingresa el nombre del archivo: ");
-                    String filename = scanner.next();
-                    hashTable.cargarDesdeArchivo(filename);
-                    break;
-                case 5:
-                    System.out.println("Reporte detallado de la tabla:");
-                    hashTable.reporte();
-                    break;
-                case 6:
-                    System.out.println("Saliendo del programa...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Por favor, elija una opción del 1 al 6.");
-            }
-        } while (opcion != 6);
-
-        scanner.close();
+    private static int hashFunction(int key) {
+        return Math.abs(key) % 10;
     }
 }
