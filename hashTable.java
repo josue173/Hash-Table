@@ -18,7 +18,6 @@ class HashTable {
     private int size;
     private LinkedList<Entry>[] table;
 
-    @SuppressWarnings("unchecked")
     public HashTable(int size) {
         this.size = size;
         table = new LinkedList[size];
