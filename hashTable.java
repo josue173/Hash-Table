@@ -65,7 +65,6 @@ public class hashTable {
             Tabla[clave] = new ArrayList<>();
         }
         Tabla[clave].add(valor);
-        // System.out.println("Valor almacenado en la posición " + clave);
     }
 
     private static void eliminarValor() {
